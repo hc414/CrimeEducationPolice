@@ -1,7 +1,10 @@
 <script>
-    import ScrollyTeller from '../components/ScrollyTeller.svelte'
+  // import App from '../components/App.svelte';
+  import ScrollyTeller from '../components/ScrollyTeller.svelte';
+
 </script>
 
+<!-- <App /> -->
 <main>
-    <ScrollyTeller />
+  <ScrollyTeller />
 </main>

@@ -1,6 +1,8 @@
+
 <script>
   import { onMount } from "svelte";
   import Police from "./Police.svelte";
+  import CalMap from "./CalMap.svelte"
   // import { currentPage } from "./store.js"; // import the store
 
   let sections, currentPage;
@@ -34,16 +36,23 @@
 
 <div class="foreground">
   {#each Array(6) as _, index}
-    <section>This is section {index + 1}</section>
+    <h1>This is section {index + 1} </h1>
+    {#if index == 0}
+      <section><CalMap /></section>
+    {:else}
+      <section>This is section {index + 1}</section>
+    {/if}
+    <!-- <section>This is section {index + 1}</section> -->
 
     <!-- add visulation page to each section below -->
-    {#if index == 0}
-      <Police />
-    {/if}
+    <!-- {#if index == 0}
+      <CalMap />
+    {/if} -->
   {/each}
 </div>
 
-<style>
+<style global>
+  @import 'public/global.css';
   section {
     height: 100vh;
     width: 100%;
@@ -52,3 +61,4 @@
     align-items: center;
   }
 </style>
+

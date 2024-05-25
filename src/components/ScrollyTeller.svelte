@@ -1,8 +1,8 @@
-
 <script>
   import { onMount } from "svelte";
   import CalMap from "./CalMap.svelte";
   import Crime from "./Mychart.svelte";
+  import Police from "./Police.svelte";
 
   let sections, currentPage;
 
@@ -35,6 +35,8 @@
 
 <div class="foreground">
   {#each Array(6) as _, index}
+
+  <!-- 1st page, cal map with county crime data -->
     {#if index == 0}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
@@ -48,6 +50,8 @@
         </section>
       </div>
     {/if}
+
+    <!-- 2nd page, county crime type -->
     {#if index == 1}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
@@ -61,7 +65,9 @@
         </section>
       </div>
     {/if}
-    {#if index > 1}
+
+    <!-- 3rd page, police page -->
+    <!-- {#if index == 2}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
@@ -69,18 +75,17 @@
             <h1 class="header">This is section {index + 1}</h1>
           </div>
           <div class="right">
-            <h1 class="header">This is section {index + 1}</h1>
+            <Police />
           </div>
         </section>
       </div>
-    {/if}
+    {/if} -->
+
   {/each}
 </div>
 
-
-
 <style global>
-  @import 'public/global.css';
+  @import "public/global.css";
 
   section {
     height: 100vh;
@@ -97,7 +102,8 @@
     width: 100%;
   }
 
-  .left, .right {
+  .left,
+  .right {
     display: grid;
     justify-content: center;
     align-items: center;
@@ -121,4 +127,3 @@
     margin-bottom: 100px;
   }
 </style>
-

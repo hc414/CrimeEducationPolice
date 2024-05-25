@@ -2,6 +2,7 @@
   import mapboxgl from "mapbox-gl";
   import { onMount } from "svelte";
 
+
   mapboxgl.accessToken =
     "YOUR_TOKEN_HERE";
 
@@ -45,6 +46,12 @@
         map.setLayoutProperty(layerId, "visibility", "none");
       }
     }
+
+
+    map.on('click', 'counties-layer', (e) => {
+        const county = e.features[0].properties.name;
+        selectedCounty.set(county);
+      });
 
     // map.on("load", () => {
     //   hideLabelLayers();

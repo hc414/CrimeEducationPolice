@@ -1,14 +1,7 @@
 
 <script>
   import { onMount } from "svelte";
-<<<<<<< HEAD
-  import Police from "./Police.svelte";
-  import CalMap from "./CalMap.svelte";
-  import Crime from "./Mychart.svelte";
-  // import { currentPage } from "./store.js"; // import the store
-=======
   import CalMap from "./CalMap.svelte"
->>>>>>> 87d05aa5d27a873a7d8525c7b593cc4c0f2da8fb
 
   let sections, currentPage;
 
@@ -42,10 +35,6 @@
 <div class="foreground">
   {#each Array(6) as _, index}
     {#if index == 0}
-<<<<<<< HEAD
-      <section><CalMap /></section>
-      <section><Crime/></section>
-=======
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
@@ -58,7 +47,6 @@
         </section>
       </div>
       
->>>>>>> 87d05aa5d27a873a7d8525c7b593cc4c0f2da8fb
     {:else}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
@@ -72,16 +60,6 @@
         </section>
       </div>
     {/if}
-<<<<<<< HEAD
-
-    <!-- <section>This is section {index + 1}</section> -->
-
-    <!-- add visulation page to each section below -->
-    <!-- {#if index == 0}
-      <CalMap />
-    {/if} -->
-=======
->>>>>>> 87d05aa5d27a873a7d8525c7b593cc4c0f2da8fb
   {/each}
 </div>
 
@@ -128,7 +106,4 @@
     margin-bottom: 100px;
   }
 </style>
-<<<<<<< HEAD
-=======
 
->>>>>>> 87d05aa5d27a873a7d8525c7b593cc4c0f2da8fb

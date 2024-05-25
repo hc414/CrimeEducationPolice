@@ -92,3 +92,9 @@ div.tooltip {
 	border-radius: 8px;
 	pointer-events: none;
 }
+
+.slider {
+	width: 650px;
+	margin: 20px auto;
+}
+

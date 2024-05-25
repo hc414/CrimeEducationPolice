@@ -1,7 +1,6 @@
 
 <script>
   import { onMount } from "svelte";
-  import Police from "./Police.svelte";
   import CalMap from "./CalMap.svelte"
 
   let sections, currentPage;

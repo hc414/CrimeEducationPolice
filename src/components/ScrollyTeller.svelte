@@ -1,7 +1,8 @@
 
 <script>
   import { onMount } from "svelte";
-  import CalMap from "./CalMap.svelte"
+  import CalMap from "./CalMap.svelte";
+  import Crime from "./Mychart.svelte";
 
   let sections, currentPage;
 
@@ -46,8 +47,21 @@
           </div>
         </section>
       </div>
-      
-    {:else}
+    {/if}
+    {#if index == 1}
+      <div class="big-section">
+        <h1 class="header">This is section {index + 1}</h1>
+        <section class="section-map">
+          <div class="left">
+            <h1 class="header">This is section {index + 1}</h1>
+          </div>
+          <div class="right">
+            <Crime />
+          </div>
+        </section>
+      </div>
+    {/if}
+    {#if index > 1}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
@@ -62,6 +76,7 @@
     {/if}
   {/each}
 </div>
+
 
 
 <style global>

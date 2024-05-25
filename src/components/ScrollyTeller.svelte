@@ -32,24 +32,6 @@
   });
 </script>
 
-<!-- <div class="foreground">
-  {#each Array(6) as _, index}
-    
-    {#if index == 0}
-      <section class="section-map">
-        <h1 class="header">This is section {index + 1} </h1>
-
-        <div class="map-container">
-          <CalMap />
-        </div>
-      </section>
-    {:else}
-      <section>
-        <h1 class="header">This is section {index + 1} </h1>
-        This is section {index + 1}</section>
-    {/if}
-  {/each}
-</div> -->
 <div class="foreground">
   {#each Array(6) as _, index}
     {#if index == 0}
@@ -81,32 +63,7 @@
   {/each}
 </div>
 
-<!-- <style global>
-  @import 'public/global.css';
-  section {
-    height: 100vh;
-    width: 100%;
-    display: grid;
-    justify-content: center;
-    align-items: center;
-  }
-  .section-map {
-    height: 100vh;
-    width: 100%;
-    display: grid;
-    justify-content: center;
-    align-items: center;
-  }
 
-  .map-container {
-    height: 100vh;
-    width: 100%;
-    display: grid;
-    justify-content: right;
-    align-items: right;
-  }
-
-</style> -->
 <style global>
   @import 'public/global.css';
 
@@ -145,12 +102,8 @@
     text-align: center;
   }
 
-  .map-container {
-    height: 80%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .big-section {
+    margin-bottom: 100px;
   }
 </style>
 

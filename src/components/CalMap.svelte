@@ -20,6 +20,7 @@
 
     onMount(() => {
         const svg = d3.select("#map").append("svg")
+            .attr("id", "calMap")
             .attr("width", width)
             .attr("height", height);
 

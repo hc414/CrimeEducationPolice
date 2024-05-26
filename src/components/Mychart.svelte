@@ -7,7 +7,7 @@
     let columns;
 
     async function loadData() {
-        const response = await d3.csv('/counties_crime.csv');
+        const response = await d3.csv('./counties_crime.csv');
         columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
         data = response.flatMap(d => columns.map(year => ({
             County: d.County,
@@ -21,7 +21,7 @@
     onMount(loadData);
 
     function plotCrimeData(filteredData = data) {
-        const svg = d3.select('#chart');
+        const svg = d3.select('#CrimeChart');
         svg.selectAll('*').remove(); // Clear previous plots
 
         const width = 800, height = 400;
@@ -83,7 +83,7 @@
         text-align: center;
         margin-top: 20px;
     }
-    #chart {
+    #CrimeChart {
         margin: auto;
     }
 </style>
@@ -92,4 +92,4 @@
     <input type="text" bind:value={stateName} placeholder="Enter county name" />
     <button on:click={filterData}>Show Data</button>
 </div>
-<svg id="chart"></svg>
+<svg id="CrimeChart"></svg>

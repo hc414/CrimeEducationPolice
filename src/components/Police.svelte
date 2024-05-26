@@ -123,7 +123,7 @@
 
   //draw the line chart for this county
   function drawChart() {
-    const svg = d3.select("svg");
+    const svg = d3.select("#PoliceChart");
     svg.selectAll("*").remove(); // Clear previous drawings
 
     const margin = { top: 20, right: 100, bottom: 30, left: 50 },
@@ -168,7 +168,7 @@
 <input type="text" bind:value={inputCounty} placeholder="Enter county name" />
 <button on:click={highlightChartData}>Show Data</button>
 
-<svg id="chart" width="750" height="500"></svg>
+<svg id="PoliceChart" width="750" height="500"></svg>
 
 
 

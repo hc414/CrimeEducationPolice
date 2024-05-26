@@ -67,7 +67,7 @@
     {/if}
 
     <!-- 3rd page, police page -->
-    <!-- {#if index == 2}
+    {#if index == 2}
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
@@ -79,7 +79,7 @@
           </div>
         </section>
       </div>
-    {/if} -->
+    {/if}
 
   {/each}
 </div>

@@ -3,32 +3,49 @@
     import * as d3 from 'd3';
 
     let stateName = '';
+    let selectedYear = '';  // Variable to hold the user-selected year
     let data = [];
-    let columns;
+    let columns = []; // Initialize columns as an empty array to avoid errors during component initialization
 
     async function loadData() {
-        const response = await d3.csv('./counties_crime.csv');
-        columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
-        data = response.flatMap(d => columns.map(year => ({
-            County: d.County,
-            Year: year,
-            Crime_Count: +d[year],
-            Crime_Category: d.Crimes
-        })));
-        plotCrimeData();
+        const response = await d3.csv('/counties_crime.csv');
+        if (response && response.columns) {
+            columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
+            data = response.flatMap(d => columns.map(year => ({
+                County: d.County,
+                Year: year,
+                Crime_Count: +d[year],
+                Crime_Category: d.Crimes
+            })));
+        }
+        if (data.length > 0 && stateName && selectedYear) {
+            filterData(); // Call filterData only if there is data and both filters are set
+        }
     }
 
     onMount(loadData);
 
-    function plotCrimeData(filteredData = data) {
-        const svg = d3.select('#CrimeChart');
+    function filterData() {
+        if (!stateName || !selectedYear) return; // Do not proceed if any filter is not set
+
+        const filteredData = data.filter(d =>
+            d.County.toLowerCase().includes(stateName.toLowerCase()) &&
+            d.Year === selectedYear
+        );
+        plotCrimeData(filteredData);
+    }
+    
+    function plotCrimeData(filteredData) {
+        if (filteredData.length === 0) return; // Prevent plotting if no data matches
+
+        const svg = d3.select('#chart');
         svg.selectAll('*').remove(); // Clear previous plots
 
         const width = 800, height = 400;
         const margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
         const x0 = d3.scaleBand()
-            .domain(data.map(d => d.Year))
+            .domain(filteredData.map(d => d.Year))
             .range([margin.left, width - margin.right])
             .padding(0.1);
 
@@ -62,6 +79,8 @@
                     if (d.Crime_Category === 'Property Crimes') return 'blue';
                     if (d.Crime_Category === 'Arson') return 'green';
                 });
+        
+        
 
         svg.append('g')
             .attr('transform', `translate(0,${height - margin.bottom})`)
@@ -71,11 +90,6 @@
             .attr('transform', `translate(${margin.left},0)`)
             .call(d3.axisLeft(y));
     }
-
-    function filterData() {
-        const filteredData = data.filter(d => d.County.toLowerCase().includes(stateName.toLowerCase()));
-        plotCrimeData(filteredData);
-    }
 </script>
 
 <style>
@@ -83,13 +97,19 @@
         text-align: center;
         margin-top: 20px;
     }
-    #CrimeChart {
+    #chart {
         margin: auto;
     }
 </style>
 
 <div class="container">
     <input type="text" bind:value={stateName} placeholder="Enter county name" />
+    <select bind:value={selectedYear}>
+        <option value="" disabled selected>Select a year</option>
+        {#each columns as year}
+            <option value="{year}">{year}</option>
+        {/each}
+    </select>
     <button on:click={filterData}>Show Data</button>
 </div>
-<svg id="CrimeChart"></svg>
+<svg id="chart"></svg>

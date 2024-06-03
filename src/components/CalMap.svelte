@@ -10,9 +10,11 @@
     let selectedCounty = ""; // Variable to store the selected county
 
     let data = [];
+    let specific_data = [];
+
     let columns;
     
-    async function loadData() {
+    async function loadTotalCrimeData() {
         const response = await d3.csv('./annual_crime_totals.csv');
         columns = response.columns.slice(1); // Assuming the first column is 'County' and second is 'Crimes'
         data = response.flatMap(d => columns.map(year => ({
@@ -21,7 +23,19 @@
             Crime_Count: +d[year], // Ensure Crime_Count is a number
         })));
     }
-    onMount(loadData);
+    async function loadSpecificData() {
+        const response = await d3.csv('./counties_crime.csv');
+        columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
+        specific_data = response.flatMap(d => columns.map(year => ({
+            County: d.County,
+            Year: parseInt(year, 10),
+            Crime_Count: +d[year],
+            Crime_Category: d.Crimes
+        })));
+        console.log(specific_data);
+    }
+    onMount(loadTotalCrimeData);
+    onMount(loadSpecificData);
 
     let projection = geoMercator()
         .scale(1000 * 2.4)
@@ -55,6 +69,16 @@
 
         const div = d3.select("#map").append("div")
             .attr("class", "tooltip")
+            .style("position", "absolute")
+            .style("text-align", "center")
+            .style("width", "150px")
+            .style("padding", "2px")
+            .style("font", "12px sans-serif")
+            .style("color", "white")
+            .style("background", "rgb(0, 0, 0)")
+            .style("border", "0px")
+            .style("border-radius", "8px")
+            .style("pointer-events", "none")
             .style("opacity", 0);
 
         svg.selectAll(".subunit")
@@ -63,10 +87,26 @@
             .attr("class", d => "subunit " + d.properties.name)
             .attr("d", path)
             .on("mouseover", function(event, d) {
+                const countyData = specific_data.filter(c => c.County === d.properties.name);
+                const selectedYear = document.getElementById('selectedYear').textContent;
+                const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
+                const violent = crimeCount.filter(c => c.Crime_Category === "Violent Crimes");
+                const property = crimeCount.filter(c => c.Crime_Category === "Property Crimes");
+                const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
+                const countyTotalData = data.filter(c => c.County === d.properties.name);
+                const totalCrimeCount = countyTotalData.filter(c => c.Year === parseInt(selectedYear, 10));
+                console.log(totalCrimeCount);
+
+
+
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
-                div.html(d.properties.fullName)
+                div.html(`${d.properties.fullName}<br><br>
+                        Violent Crime: ${violent[0].Crime_Count}<br>
+                        Property Crimes: ${property[0].Crime_Count}<br>
+                        Arson: ${arson[0].Crime_Count}<br>
+                        Total: ${totalCrimeCount[0].Crime_Count}`)
                     .style("left", (event.pageX) + 10 + "px")
                     .style("top", (event.pageY - 30) + "px");
             })
@@ -96,7 +136,7 @@
 
             const scaleBar = svg.append("g")
                 .attr("class", "scale-bar")
-                .attr("transform", `translate(${width - scaleBarWidth - 30}, ${height - 30})`);
+                .attr("transform", `translate(${width - scaleBarWidth - 30}, ${height - 500})`);
 
             // Create a gradient for the scale bar
             const defs = svg.append("defs");
@@ -193,9 +233,9 @@
             });
 
             // Initial update
-            const initialYear = 2013;
+            const initialYear = "Please use the slider to select a year";
             selectedYear.textContent = initialYear;
-            updateHeatMap(initialYear);
+            // updateHeatMap(initialYear);
         }
 
         // Call updateSelectedYear function directly in onMount

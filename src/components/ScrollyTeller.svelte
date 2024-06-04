@@ -39,7 +39,7 @@
   <!-- 1st page, cal map with county crime data -->
     {#if index == 0}
       <div class="big-section">
-        <h1 class="header">This is section {index + 1}</h1>
+        <h1 class="header">California Counties Crime Counts 2013-2022</h1>
         <section class="section-map">
           <div class="right">
             <CalMap />

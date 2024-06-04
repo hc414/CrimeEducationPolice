@@ -243,18 +243,20 @@
         svg.selectAll('*').remove(); // Clear previous plots
 
         const width = 600, height = 400;
-        const margin = { top: 20, right: 120, bottom: 30, left: 80 };
+        const margin = { top: 20, right: 120, bottom: 60, left: 80 };
 
         const x0 = d3.scaleBand()
-            .domain(filteredData.map(d => d.Year))
+            .domain(['Violent Crimes', 'Property Crimes', 'Arson'])
             .range([margin.left, width - margin.right])
             .padding(0.1);
 
+        // Scale for years within each crime category
         const x1 = d3.scaleBand()
-            .domain(['Violent Crimes', 'Property Crimes', 'Arson'])
-            .rangeRound([0, x0.bandwidth()])
+            .domain([...new Set(filteredData.map(d => d.Year))])
+            .range([0, x0.bandwidth()])
             .padding(0.05);
 
+        // Y scale for crime counts
         const y = d3.scaleLinear()
             .domain([0, d3.max(filteredData, d => d.Crime_Count)])
             .nice()
@@ -263,15 +265,16 @@
         svg.attr('width', width)
             .attr('height', height);
 
+        // Create groups for each crime category
         const category = svg.selectAll('.category')
-            .data(filteredData)
+            .data(d3.group(filteredData, d => d.Crime_Category))
             .enter().append('g')
-                .attr('transform', d => `translate(${x0(d.Year)}, 0)`);
+                .attr('transform', d => `translate(${x0(d[0])}, 0)`);
 
         category.selectAll('rect')
-            .data(d => [d])
+            .data(d => d[1])
             .enter().append('rect')
-                .attr('x', d => x1(d.Crime_Category))
+                .attr('x', d => x1(d.Year))
                 .attr('y', d => y(d.Crime_Count))
                 .attr('width', x1.bandwidth())
                 .attr('height', d => y(0) - y(d.Crime_Count))
@@ -280,63 +283,47 @@
                     if (d.Crime_Category === 'Property Crimes') return 'blue';
                     if (d.Crime_Category === 'Arson') return 'green';
                 });
-                const xAxisGroup = svg.append('g')
-    .attr('transform', `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x0).tickSizeOuter(0));
 
-xAxisGroup.append('text')
-    .attr('class', 'axis-label')
-    .attr('x', width / 2)
-    .attr('y', margin.bottom)  // Adjusting position to make sure it is visible
-    .attr('fill', 'black')
-    .style('text-anchor', 'middle')
-    .style('font-size', '16px')
-    .text('Year');
+        // Add X axis for crime categories
+        const xAxisGroup = svg.append('g')
+            .attr('transform', `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x0));
 
-const yAxisGroup = svg.append('g')
-    .attr('transform', `translate(${margin.left},0)`)
-    .call(d3.axisLeft(y));
+        xAxisGroup.append('text')
+            .attr('x', width / 2)
+            .attr('y', margin.bottom - 10)
+            .attr('fill', 'black')
+            .style('text-anchor', 'middle')
+            .style('font-size', '16px')
+            .text('Crime Category');
 
-    yAxisGroup.append('text')
-        .attr('class', 'axis-label')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', (-height / 2))
-        .attr('y', -55)  // Adjusting position closer to the y-axis
-        .attr('fill', 'black')
-        .style('text-anchor', 'middle')
-        .style('font-size', '16px')
-        .text('Crime Count');
+        // Add Y axis for crime counts
+        const yAxisGroup = svg.append('g')
+            .attr('transform', `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y));
+
+        yAxisGroup.append('text')
+            .attr('class', 'axis-label')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -height / 2)
+            .attr('y', -55)  // Adjusting position closer to the y-axis
+            .attr('fill', 'black')
+            .style('text-anchor', 'middle')
+            .style('font-size', '16px')
+            .text('Crime Count');
 
 
-        
-
-        const legend = svg.append('g')
-        .attr('transform', `translate(${width - margin.right}, ${margin.top})`);
+        // Add chart title
+        const selectedYear = document.getElementById('selectedYear').textContent;
+        svg.append('text')
+            .attr('x', width / 2)
+            .attr('y', 15)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '15px')
+            .text(`${selectedCounty} - ${selectedYear} Crime Category Counts`);
+        // console.log(selectedYear);
+        };
     
-    ['Violent Crimes', 'Property Crimes', 'Arson'].forEach((category, index) => {
-        const legendRow = legend.append('g')
-            .attr('transform', `translate(0, ${index * 20})`).text(category);
-        
-        legendRow.append('rect')
-            .attr('width', 10)
-            .attr('height', 10)
-            .attr('fill', category === 'Violent Crimes' ? 'red' : category === 'Property Crimes' ? 'blue' : 'green');
-        
-        legendRow.append('text')
-            .attr('x', 20)
-            .attr('y', 10)
-            .style('font-size', '12px')
-            .text(category);
-    });
-
-    svg.append('text')
-        .attr('x', width / 2-20)
-        .attr('y', 15)
-        .attr('text-anchor', 'middle')
-        .style('font-size', '20px')
-        .text('Crime Category Counts');
-    };
-
 
     
 

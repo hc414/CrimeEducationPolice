@@ -66,10 +66,14 @@
     <!-- 3rd page, police page -->
     {#if index == 2}
       <div class="big-section">
-        <h1 class="header">This is section {index + 1}</h1>
+        <h1 class="header">California Police Population Trends (2013-2022)</h1>
         <section class="section-map">
           <div class="left">
-            <h1 class="header">This is section {index + 1}</h1>
+            <!-- <h1 class="header"></h1> -->
+            <p>This interactive visualization presents a decade-long trend (2013-2022) 
+              of police population across various counties in California. Each line 
+              represents a different county, showcasing how police population numbers 
+              have evolved over the years.</p>
           </div>
           <div class="right">
             <Police />

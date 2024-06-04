@@ -9,6 +9,7 @@
   let selectedData = []; //extract the county value from the whole csv
   let countyData = new Map();
 
+
   onMount(async () => {
     data = await d3.csv("./police_poplulation1.csv", (d) => ({
       county_name: d.county_name,
@@ -63,6 +64,7 @@
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     const color = d3
+      // .scaleSequential(d3.interpolateSpectral)
       .scaleOrdinal(d3.schemeCategory10)
       .domain(countyData.keys());
 
@@ -80,13 +82,19 @@
       .x((d) => x(d.year))
       .y((d) => y(d.value));
 
+    // Define the area generator
+    const area = d3
+      .area()
+      .x((d) => x(d.year))
+      .y0(height) // Always at the bottom
+      .y1((d) => y(d.value)); // Data point for the county
+
     countyData.forEach((values, name) => {
       svg
         .append("path")
         .datum(values)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke", color(name))
+        .attr("fill", color(name))
         .attr("stroke-width", 1.5)
         .attr("d", line);
     });
@@ -99,6 +107,7 @@
 
     // Add the y-axis
     const yAxis = svg.append("g").call(d3.axisLeft(y));
+
   }
 
   function highlightChartData() {
@@ -159,14 +168,21 @@
   $: highlightChartData();
 </script>
 
-<input type="text" bind:value={inputCounty} placeholder="Ex:San Diego" />
-<button on:click={buttonDectect}>Show Data</button>
+<div class="input-button">
+  <input type="text" bind:value={inputCounty} placeholder="Ex:San Diego" />
+  <button on:click={buttonDectect}>Show Data</button>
+</div>
+
 
 <svg id="PoliceChart" width="750" height="500"></svg>
-<!-- <svg bind:this={svg} id='chart'></svg> -->
 <p>Hello police data is below11</p>
 
 <style>
+  .input-button {
+    display: flex;
+    align-items: center;
+  }
+
   input {
     margin: 10px;
     padding: 8px;
@@ -174,7 +190,17 @@
   }
   button {
     padding: 8px 16px;
+    margin-left: 5px; /* Space between input and button */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
+  button:hover {
+    background-color: #0056b3;
+  }
+
   svg {
     margin-top: 20px;
     background-color: #f4f4f4;

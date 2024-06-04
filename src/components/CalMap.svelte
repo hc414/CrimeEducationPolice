@@ -11,10 +11,7 @@
 
     let data = [];
     let specific_data = [];
-<<<<<<< HEAD
     let crime;
-=======
->>>>>>> 9976dbd9e4447344598a49c36d8c4b1f749c8c42
 
     let columns;
     
@@ -36,11 +33,7 @@
             Crime_Count: +d[year],
             Crime_Category: d.Crimes
         })));
-<<<<<<< HEAD
         //console.log(specific_data);
-=======
-        console.log(specific_data);
->>>>>>> 9976dbd9e4447344598a49c36d8c4b1f749c8c42
     }
     onMount(loadTotalCrimeData);
     onMount(loadSpecificData);
@@ -103,11 +96,7 @@
                 const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
                 const countyTotalData = data.filter(c => c.County === d.properties.name);
                 const totalCrimeCount = countyTotalData.filter(c => c.Year === parseInt(selectedYear, 10));
-<<<<<<< HEAD
                 //console.log(totalCrimeCount);
-=======
-                console.log(totalCrimeCount);
->>>>>>> 9976dbd9e4447344598a49c36d8c4b1f749c8c42
 
 
 
@@ -158,11 +147,7 @@
 
             const scaleBar = svg.append("g")
                 .attr("class", "scale-bar")
-<<<<<<< HEAD
                 .attr("transform", `translate(${width - scaleBarWidth - 50}, ${height - 500})`);
-=======
-                .attr("transform", `translate(${width - scaleBarWidth - 30}, ${height - 500})`);
->>>>>>> 9976dbd9e4447344598a49c36d8c4b1f749c8c42
 
             // Create a gradient for the scale bar
             const defs = svg.append("defs");
@@ -380,14 +365,11 @@ const yAxisGroup = svg.append('g')
             const initialYear = "Please use the slider to select a year";
             selectedYear.textContent = initialYear;
             // updateHeatMap(initialYear);
-<<<<<<< HEAD
         }
         function updateSelectedOption(value)
         {
             const dropdown = document.getElementById('countyDropdown');
             dropdown.value = value;
-=======
->>>>>>> 9976dbd9e4447344598a49c36d8c4b1f749c8c42
         }
 
         // Call updateSelectedYear function directly in onMount

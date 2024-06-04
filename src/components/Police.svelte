@@ -9,6 +9,11 @@
   let selectedData = []; //extract the county value from the whole csv
   let countyData = new Map();
 
+  //mouse event
+  let tooltipContent = null;
+  let tooltipVisible = false;
+  let tooltipX = 0;
+  let tooltipY = 0;
 
   onMount(async () => {
     data = await d3.csv("./police_poplulation1.csv", (d) => ({
@@ -62,6 +67,7 @@
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      
 
     const color = d3
       // .scaleSequential(d3.interpolateSpectral)
@@ -96,7 +102,17 @@
         .attr("fill", "none")
         .attr("fill", color(name))
         .attr("stroke-width", 1.5)
-        .attr("d", line);
+        .attr("d", line)
+        //mouse event
+      .on('mouseover', (event, d) => {
+        tooltipContent = `${name}`;
+        tooltipVisible = true;
+        tooltipX = event.pageX;
+        tooltipY = event.pageY;
+      })
+      .on('mouseout', () => {
+        tooltipVisible = false;
+      });
     });
 
     // Add the x-axis
@@ -173,9 +189,15 @@
   <button on:click={buttonDectect}>Show Data</button>
 </div>
 
+<main>
+  <svg id="PoliceChart" width="750" height="500"></svg>
+  {#if tooltipVisible}
+    <div class="tooltip" style="position: absolute; left: {tooltipX}px; top: {tooltipY}px;">
+      {tooltipContent}
+    </div>
+  {/if}
+</main>
 
-<svg id="PoliceChart" width="750" height="500"></svg>
-<p>Hello police data is below11</p>
 
 <style>
   .input-button {
@@ -205,5 +227,19 @@
     margin-top: 20px;
     background-color: #f4f4f4;
     border: 1px solid #d1c5c5;
+  }
+
+  /* Tooltip styling */
+  .tooltip {
+    position: absolute;
+    text-align: center;
+    width: 120px;
+    height: 25px;
+    padding: 2px;
+    font: 16px sans-serif;
+    background: rgb(160, 197, 247);
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
   }
 </style>

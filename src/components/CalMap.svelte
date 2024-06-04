@@ -10,9 +10,12 @@
     let selectedCounty = ""; // Variable to store the selected county
 
     let data = [];
+    let specific_data = [];
+    let crime;
+
     let columns;
     
-    async function loadData() {
+    async function loadTotalCrimeData() {
         const response = await d3.csv('./annual_crime_totals.csv');
         columns = response.columns.slice(1); // Assuming the first column is 'County' and second is 'Crimes'
         data = response.flatMap(d => columns.map(year => ({
@@ -21,7 +24,19 @@
             Crime_Count: +d[year], // Ensure Crime_Count is a number
         })));
     }
-    onMount(loadData);
+    async function loadSpecificData() {
+        const response = await d3.csv('./counties_crime.csv');
+        columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
+        specific_data = response.flatMap(d => columns.map(year => ({
+            County: d.County,
+            Year: parseInt(year, 10),
+            Crime_Count: +d[year],
+            Crime_Category: d.Crimes
+        })));
+        //console.log(specific_data);
+    }
+    onMount(loadTotalCrimeData);
+    onMount(loadSpecificData);
 
     let projection = geoMercator()
         .scale(1000 * 2.4)
@@ -55,6 +70,16 @@
 
         const div = d3.select("#map").append("div")
             .attr("class", "tooltip")
+            .style("position", "absolute")
+            .style("text-align", "center")
+            .style("width", "150px")
+            .style("padding", "2px")
+            .style("font", "12px sans-serif")
+            .style("color", "white")
+            .style("background", "rgb(0, 0, 0)")
+            .style("border", "0px")
+            .style("border-radius", "8px")
+            .style("pointer-events", "none")
             .style("opacity", 0);
 
         svg.selectAll(".subunit")
@@ -63,10 +88,26 @@
             .attr("class", d => "subunit " + d.properties.name)
             .attr("d", path)
             .on("mouseover", function(event, d) {
+                const countyData = specific_data.filter(c => c.County === d.properties.name);
+                const selectedYear = document.getElementById('selectedYear').textContent;
+                const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
+                const violent = crimeCount.filter(c => c.Crime_Category === "Violent Crimes");
+                const property = crimeCount.filter(c => c.Crime_Category === "Property Crimes");
+                const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
+                const countyTotalData = data.filter(c => c.County === d.properties.name);
+                const totalCrimeCount = countyTotalData.filter(c => c.Year === parseInt(selectedYear, 10));
+                //console.log(totalCrimeCount);
+
+
+
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
-                div.html(d.properties.fullName)
+                div.html(`${d.properties.fullName}<br><br>
+                        Violent Crime: ${violent[0].Crime_Count}<br>
+                        Property Crimes: ${property[0].Crime_Count}<br>
+                        Arson: ${arson[0].Crime_Count}<br>
+                        Total: ${totalCrimeCount[0].Crime_Count}`)
                     .style("left", (event.pageX) + 10 + "px")
                     .style("top", (event.pageY - 30) + "px");
             })
@@ -77,7 +118,17 @@
             })
             .on("click", function(event, d) {
                 selectedCounty = d.properties.fullName;
+                const countyData = specific_data.filter(c => c.County === d.properties.name);
+                const selectedYear = document.getElementById('selectedYear').textContent;
+                const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
+                // const violent = crimeCount.filter(c => c.Crime_Category === "Violent Crimes");
+                // const property = crimeCount.filter(c => c.Crime_Category === "Property Crimes");
+                // const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
+                console.log(crimeCount);
+                crime = crimeCount;
                 highlightCounty();
+                plotCrimeData(crimeCount);
+                updateSelectedOption(selectedCounty);
             });
 
         svg.append("path")
@@ -91,12 +142,12 @@
 
         // Add colored scale bar
         function addScaleBar() {
-            const scaleBarWidth = 300;
+            const scaleBarWidth = 250;
             const scaleBarHeight = 10;
 
             const scaleBar = svg.append("g")
                 .attr("class", "scale-bar")
-                .attr("transform", `translate(${width - scaleBarWidth - 30}, ${height - 30})`);
+                .attr("transform", `translate(${width - scaleBarWidth - 50}, ${height - 500})`);
 
             // Create a gradient for the scale bar
             const defs = svg.append("defs");
@@ -136,7 +187,7 @@
                 .attr("x", scaleBarWidth)
                 .attr("y", -5)
                 .attr("text-anchor", "middle")
-                .text(10000); // Default max value, will be updated
+                .text(1000000); // Default max value, will be updated
         }
 
         addScaleBar();
@@ -154,7 +205,7 @@
 
             // Check if data exists for the selected year
             if (yearData.length === 0) {
-                console.warn(`No data available for the year ${yearInt}`);
+                //console.warn(`No data available for the year ${yearInt}`);
                 // Handle this case, e.g., set a default color or notify the user
                 svg.selectAll(".subunit").style("fill", "gray"); // Example: Set default color to gray
                 return;
@@ -178,7 +229,116 @@
         document.getElementById("countyDropdown").addEventListener("change", function(event) {
             selectedCounty = event.target.value;
             highlightCounty();
+            // selectedCounty = d.properties.fullName;
+            const countyData = specific_data.filter(c => c.County === selectedCounty.replace(' County',''));
+            const selectedYear = document.getElementById('selectedYear').textContent;
+            const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
+            console.log(crimeCount);
+            plotCrimeData(crimeCount);
         });
+        
+    function plotCrimeData(filteredData) {
+
+        const svg = d3.select('#chart');
+        svg.selectAll('*').remove(); // Clear previous plots
+
+        const width = 600, height = 400;
+        const margin = { top: 20, right: 120, bottom: 30, left: 80 };
+
+        const x0 = d3.scaleBand()
+            .domain(filteredData.map(d => d.Year))
+            .range([margin.left, width - margin.right])
+            .padding(0.1);
+
+        const x1 = d3.scaleBand()
+            .domain(['Violent Crimes', 'Property Crimes', 'Arson'])
+            .rangeRound([0, x0.bandwidth()])
+            .padding(0.05);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(filteredData, d => d.Crime_Count)])
+            .nice()
+            .range([height - margin.bottom, margin.top]);
+
+        svg.attr('width', width)
+            .attr('height', height);
+
+        const category = svg.selectAll('.category')
+            .data(filteredData)
+            .enter().append('g')
+                .attr('transform', d => `translate(${x0(d.Year)}, 0)`);
+
+        category.selectAll('rect')
+            .data(d => [d])
+            .enter().append('rect')
+                .attr('x', d => x1(d.Crime_Category))
+                .attr('y', d => y(d.Crime_Count))
+                .attr('width', x1.bandwidth())
+                .attr('height', d => y(0) - y(d.Crime_Count))
+                .attr('fill', d => {
+                    if (d.Crime_Category === 'Violent Crimes') return 'red';
+                    if (d.Crime_Category === 'Property Crimes') return 'blue';
+                    if (d.Crime_Category === 'Arson') return 'green';
+                });
+                const xAxisGroup = svg.append('g')
+    .attr('transform', `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x0).tickSizeOuter(0));
+
+xAxisGroup.append('text')
+    .attr('class', 'axis-label')
+    .attr('x', width / 2)
+    .attr('y', margin.bottom)  // Adjusting position to make sure it is visible
+    .attr('fill', 'black')
+    .style('text-anchor', 'middle')
+    .style('font-size', '16px')
+    .text('Year');
+
+const yAxisGroup = svg.append('g')
+    .attr('transform', `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y));
+
+    yAxisGroup.append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', (-height / 2))
+        .attr('y', -55)  // Adjusting position closer to the y-axis
+        .attr('fill', 'black')
+        .style('text-anchor', 'middle')
+        .style('font-size', '16px')
+        .text('Crime Count');
+
+
+        
+
+        const legend = svg.append('g')
+        .attr('transform', `translate(${width - margin.right}, ${margin.top})`);
+    
+    ['Violent Crimes', 'Property Crimes', 'Arson'].forEach((category, index) => {
+        const legendRow = legend.append('g')
+            .attr('transform', `translate(0, ${index * 20})`).text(category);
+        
+        legendRow.append('rect')
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('fill', category === 'Violent Crimes' ? 'red' : category === 'Property Crimes' ? 'blue' : 'green');
+        
+        legendRow.append('text')
+            .attr('x', 20)
+            .attr('y', 10)
+            .style('font-size', '12px')
+            .text(category);
+    });
+
+    svg.append('text')
+        .attr('x', width / 2-20)
+        .attr('y', 15)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '20px')
+        .text('Crime Category Counts');
+    };
+
+
+    
 
         function updateSelectedYear() {
             const slider = document.getElementById('yearSlider');
@@ -190,16 +350,31 @@
                 const year = parseInt(this.value, 10); // Ensure the year is treated as an integer
                 selectedYear.textContent = year;
                 updateHeatMap(year);
+                if (selectedCounty != "") {
+                    const countyData = specific_data.filter(c => c.County === selectedCounty.replace(' County',''));
+                    const selectedYear = document.getElementById('selectedYear').textContent;
+                    const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
+                    plotCrimeData(crimeCount);
+                }
+
+
             });
+            
 
             // Initial update
-            const initialYear = 2013;
+            const initialYear = "Please use the slider to select a year";
             selectedYear.textContent = initialYear;
-            updateHeatMap(initialYear);
+            // updateHeatMap(initialYear);
+        }
+        function updateSelectedOption(value)
+        {
+            const dropdown = document.getElementById('countyDropdown');
+            dropdown.value = value;
         }
 
         // Call updateSelectedYear function directly in onMount
         updateSelectedYear();
+
 
         const countiesData = feature(cal, cal.objects.subunits).features.map(d => d.properties.fullName);
         const dropdown = document.getElementById("countyDropdown");

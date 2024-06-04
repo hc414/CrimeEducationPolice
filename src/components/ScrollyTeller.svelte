@@ -41,12 +41,14 @@
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
-          <div class="left">
-            <h1 class="header">This is section {index + 1}</h1>
-          </div>
           <div class="right">
             <CalMap />
           </div>
+          <div class="left">
+            <Crime />
+          </div>
+          
+          
         </section>
       </div>
     {/if}
@@ -56,12 +58,7 @@
       <div class="big-section">
         <h1 class="header">This is section {index + 1}</h1>
         <section class="section-map">
-          <div class="left">
-            <h1 class="header">This is section {index + 1}</h1>
-          </div>
-          <div class="right">
-            <Crime />
-          </div>
+          
         </section>
       </div>
     {/if}
@@ -107,6 +104,7 @@
     display: grid;
     justify-content: center;
     align-items: center;
+    width: 100%;
   }
 
   .left {
@@ -117,6 +115,7 @@
   .right {
     justify-content: center;
     align-items: center;
+
   }
 
   .header {

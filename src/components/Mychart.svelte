@@ -32,10 +32,11 @@
             d.County.toLowerCase().includes(stateName.toLowerCase()) &&
             d.Year === selectedYear
         );
+        console.log(filteredData);
         plotCrimeData(filteredData);
     }
     
-    function plotCrimeData(filteredData) {
+    export function plotCrimeData(filteredData) {
         if (filteredData.length === 0) return; // Prevent plotting if no data matches
 
         const svg = d3.select('#chart');
@@ -103,13 +104,6 @@
 </style>
 
 <div class="container">
-    <input type="text" bind:value={stateName} placeholder="Enter county name" />
-    <select bind:value={selectedYear}>
-        <option value="" disabled selected>Select a year</option>
-        {#each columns as year}
-            <option value="{year}">{year}</option>
-        {/each}
-    </select>
-    <button on:click={filterData}>Show Data</button>
+
 </div>
 <svg id="chart"></svg>

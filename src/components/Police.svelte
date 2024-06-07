@@ -67,7 +67,6 @@
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-      
 
     const color = d3
       // .scaleSequential(d3.interpolateSpectral)
@@ -104,15 +103,15 @@
         .attr("stroke-width", 1.5)
         .attr("d", line)
         //mouse event
-      .on('mouseover', (event, d) => {
-        tooltipContent = `${name}`;
-        tooltipVisible = true;
-        tooltipX = event.pageX;
-        tooltipY = event.pageY;
-      })
-      .on('mouseout', () => {
-        tooltipVisible = false;
-      });
+        .on("mouseover", (event, d) => {
+          tooltipContent = `${name}`;
+          tooltipVisible = true;
+          tooltipX = event.pageX;
+          tooltipY = event.pageY;
+        })
+        .on("mouseout", () => {
+          tooltipVisible = false;
+        });
     });
 
     // Add the x-axis
@@ -123,11 +122,12 @@
 
     // Add the y-axis
     const yAxis = svg.append("g").call(d3.axisLeft(y));
-
   }
 
   function highlightChartData() {
-    const match = data.find((d) => d.county_name.toLowerCase() === inputCounty);
+    const match = data.find(
+      (d) => d.county_name.toLowerCase() === inputCounty.toLowerCase()
+    );
     if (match) {
       selectedData = Object.entries(match.data).map(([year, value]) => ({
         year,
@@ -192,12 +192,14 @@
 <main>
   <svg id="PoliceChart" width="750" height="500"></svg>
   {#if tooltipVisible}
-    <div class="tooltip" style="position: absolute; left: {tooltipX}px; top: {tooltipY}px;">
+    <div
+      class="tooltip"
+      style="position: absolute; left: {tooltipX}px; top: {tooltipY}px;"
+    >
       {tooltipContent}
     </div>
   {/if}
 </main>
-
 
 <style>
   .input-button {
@@ -225,8 +227,8 @@
 
   svg {
     margin-top: 20px;
-    background-color: #f4f4f4;
-    border: 1px solid #d1c5c5;
+    background-color: #ffffff;
+    border: 1px solid #ffffff;
   }
 
   /* Tooltip styling */

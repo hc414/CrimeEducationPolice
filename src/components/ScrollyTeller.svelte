@@ -36,53 +36,82 @@
 <div class="foreground">
   {#each Array(6) as _, index}
     <!-- 1st page, county crime type -->
-    {#if index == 0}
+    <!-- {#if index == 0}
       <div class="big-section">
         <h1 class="header">California Counties Crime Counts 2013-2022</h1>
         <p class="writeup">
-          This interactive visualization presents a decade-long trend
-          (2013-2022) of police population across various counties in
-          California. Each line represents a different county, showcasing how
-          police population numbers have evolved over the years.
+          Welcome to our comprehensive analytical project that investigates the
+          relationship between crime rates and police presence across different
+          counties in California. Utilizing advanced data analysis techniques,
+          we meticulously examine how these variables interact within diverse
+          communities. Our project leverages extensive, up-to-date datasets to
+          ensure accuracy and relevance in our findings.
         </p>
+        <p class="writeup">
+          We aim to identify potential correlations that may shed light on the
+          effectiveness of law enforcement strategies and their impact on crime
+          rates. Our interactive platform features a detailed heat map of each
+          county, inviting you to visually compare these metrics across the
+          state. By clicking on any county within the map, you can access a bar
+          graph that provides a more granular view of the data, including
+          specific crime rates.
+        </p>
+        <p class="writeup"></p>
         <section class="section-map"></section>
       </div>
-    {/if}
+    {/if} -->
 
     <!-- 2nd page, cal map with county crime data -->
-    {#if index == 1}
-      <div class="big-section">
-        <h1 class="header">California Counties Crime Rate Heat Map</h1>
-        <section class="section-map">
-          <div class="right">
-            <CalMap />
-          </div>
-          <div class="left">
-            <Crime />
-          </div>
-        </section>
-      </div>
+    {#if index == 0}
+      <h1 class="header">California Counties Crime Counts 2013-2022</h1>
+
+      <p class="writeup">
+        Welcome to our comprehensive analytical project that investigates the
+        relationship between crime rates and police presence across different
+        counties in California. Utilizing advanced data analysis techniques, we
+        meticulously examine how these variables interact within diverse
+        communities. Our project leverages extensive, up-to-date datasets to
+        ensure accuracy and relevance in our findings.
+      </p>
+      <p class="writeup">
+        We aim to identify potential correlations that may shed light on the
+        effectiveness of law enforcement strategies and their impact on crime
+        rates. Our interactive platform features a detailed heat map of each
+        county, inviting you to visually compare these metrics across the state.
+        By clicking on any county within the map, you can access a bar graph
+        that provides the counts of each crime categories, such as Violets
+        Crimes, Properties Crimes, and Arson.
+      </p>
+
+      <section class="section-map">
+        <div class="right">
+          <p class="writeup">Counties Crime Rate Heat Map</p>
+
+          <CalMap />
+        </div>
+        <div class="left">
+          <Crime />
+        </div>
+      </section>
     {/if}
 
     <!-- 3rd page, police page -->
     {#if index == 2}
-      <div class="big-section">
-        <h1 class="header">California Police Population Trends (2013-2022)</h1>
-        <section class="section-map">
-          <div class="left">
-            <!-- <h1 class="header"></h1> -->
-            <p>
-              This interactive visualization presents a decade-long trend
-              (2013-2022) of police population across various counties in
-              California. Each line represents a different county, showcasing
-              how police population numbers have evolved over the years.
-            </p>
-          </div>
-          <div class="right">
-            <Police />
-          </div>
-        </section>
-      </div>
+      <p class="writeup">California Police Population Trends (2013-2022)</p>
+      <p class="writeup">
+        This interactive visualization presents a decade-long trend (2013-2022)
+        of police population across various counties in California. Each line
+        represents a different county, showcasing how police population numbers
+        have evolved over the years.
+      </p>
+      <section class="section-map">
+        <div class>
+          <!-- <h1 class="header"></h1> -->
+        </div>
+        <div class="right">
+          <Police />
+        </div>
+      </section>
     {/if}
   {/each}
 </div>

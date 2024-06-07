@@ -28,7 +28,7 @@
     console.log("all data", data);
     console.log("load csv success");
 
-    //   highlightChartData();  // Ensure initial data is loaded for default county
+      // highlightChartData();  // Ensure initial data is loaded for default county
     allChart();
   });
 
@@ -55,7 +55,7 @@
 
   function drawAllCounty(countyData) {
     //draw all county line
-    const margin = { top: 20, right: 30, bottom: 50, left: 60 }; // Adjusted for label space
+    const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
     const width = 990 - margin.left - margin.right;
     const height = 551 - margin.top - margin.bottom;
 
@@ -64,7 +64,7 @@
 
     const svg = svgCountainer
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("height", height + margin.top + margin.bottom + 100)
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
@@ -99,8 +99,8 @@
         .append("path")
         .datum(values)
         .attr("fill", "none")
-        .attr("fill", color(name))
-        .attr("stroke-width", 1.5)
+        .attr("stroke", color(name))
+        .attr("stroke-width", 3)
         .attr("d", line)
         //mouse event
         .on("mouseover", (event, d) => {
@@ -122,6 +122,31 @@
 
     // Add the y-axis
     const yAxis = svg.append("g").call(d3.axisLeft(y));
+
+    // X-axis label
+    svg
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", width / 2 + margin.left)
+      .attr("y", height + margin.bottom + 60)
+      .text("Year");
+
+    // Y-axis label
+    svg
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .attr("y", margin.left - 109)
+      .attr("x", -margin.top - height / 2 + 70)
+      .text("Population");
+
+    svg
+      .append("text")
+      .attr("class", "chart title")
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2 + margin.left)
+      .attr("y", margin.top / 2 - 90)
+      .text("Annual Police population changes in California");
   }
 
   function highlightChartData() {
@@ -139,13 +164,81 @@
   }
 
   //draw the line chart for this county
+  // function drawChart() {
+  //   const svg = d3.select("#PoliceChart");
+  //   svg.selectAll("*").remove(); // Clear previous drawings
+
+  //   const margin = { top: 20, right: 100, bottom: 30, left: 50 },
+  //     width = 800 - margin.left - margin.right,
+  //     height = 500 - margin.top - margin.bottom;
+
+  //   const x = d3
+  //     .scaleBand()
+  //     .domain(selectedData.map((d) => d.year))
+  //     .range([0, width])
+  //     .padding(0.1);
+
+  //   const y = d3
+  //     .scaleLinear()
+  //     .domain([0, d3.max(selectedData, (d) => d.value)])
+  //     .range([height, 0]);
+
+  //   const g = svg
+  //     .append("g")
+  //     .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  //   g.append("g")
+  //     .attr("transform", `translate(0,${height})`)
+  //     .call(d3.axisBottom(x));
+
+  //   g.append("g").call(d3.axisLeft(y));
+
+  //   const line = d3
+  //     .line()
+  //     .x((d) => x(d.year) + x.bandwidth() / 2)
+  //     .y((d) => y(d.value));
+
+  //   g.append("path")
+  //     .datum(selectedData)
+  //     .attr("fill", "none")
+  //     .attr("stroke", "steelblue")
+  //     .attr("stroke-width", 2)
+  //     .attr("d", line);
+
+  //   g.append("text")
+  //     .attr("class", "x label")
+  //     .attr("text-anchor", "end")
+  //     .attr("x", width / 2 + margin.left - 10)
+  //     .attr("y", height + margin.bottom + 30)
+  //     .text("Year");
+
+  //   // Y-axis label
+  //   g.append("text")
+  //     .attr("class", "y label")
+  //     .attr("text-anchor", "end")
+  //     .attr("transform", "rotate(-90)")
+  //     .attr("y", -margin.left + 10)
+  //     .attr("x", -height / 2)
+  //     .text("Population");
+  // }
   function drawChart() {
     const svg = d3.select("#PoliceChart");
     svg.selectAll("*").remove(); // Clear previous drawings
 
-    const margin = { top: 20, right: 100, bottom: 30, left: 50 },
-      width = 800 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+    // Adjust the top margin to a larger value
+    const margin = { top: 100, right: 100, bottom: 50, left: 70 }, // Increased top margin
+      svgWidth = 800,
+      svgHeight = 500,
+      width = svgWidth - margin.left - margin.right,
+      height = svgHeight - margin.top - margin.bottom;
+
+    //   const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
+    // const width = 990 - margin.left - margin.right;
+    // const height = 551 - margin.top - margin.bottom;
+    // Apply the increased top margin in the transform of the g element
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     const x = d3
       .scaleBand()
@@ -158,16 +251,15 @@
       .domain([0, d3.max(selectedData, (d) => d.value)])
       .range([height, 0]);
 
-    const g = svg
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
+    // Add x-axis
     g.append("g")
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x));
 
+    // Add y-axis
     g.append("g").call(d3.axisLeft(y));
 
+    // Define and draw the line
     const line = d3
       .line()
       .x((d) => x(d.year) + x.bandwidth() / 2)
@@ -179,6 +271,29 @@
       .attr("stroke", "steelblue")
       .attr("stroke-width", 2)
       .attr("d", line);
+
+    // Add x-axis label
+    g.append("text")
+      .attr("text-anchor", "end")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 10)
+      .text("Year");
+
+    // Add y-axis label
+    g.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 20)
+      .attr("x", -height / 2)
+      .text("Value");
+
+    // Add chart title
+    svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", svgWidth / 2)
+      .attr("y", margin.top / 2)
+      .text("Annual Crime Rates and Police Presence");
   }
 
   $: highlightChartData();

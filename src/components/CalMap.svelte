@@ -11,6 +11,7 @@
 
     let data = [];
     let specific_data = [];
+    let population_data = [];
     let crime;
 
     let columns;
@@ -24,6 +25,19 @@
             Crime_Count: +d[year], // Ensure Crime_Count is a number
         })));
     }
+    async function loadCountyPopData() {
+        const response = await d3.csv('./county_population.csv');
+        console.log(response.columns.slice(4));
+        // columns = response.columns.slice(1); // Assuming the first column is 'County' and second is 'Crimes'
+
+        population_data = response.flatMap(d => columns.map(year => ({
+            County: d.CTYNAME.replace('County', '').trim(),
+            Year: parseInt(year, 10), // Ensure Year is an integer
+            Population: +d[year], 
+        })));
+        console.log(population_data);
+
+    }
     async function loadSpecificData() {
         const response = await d3.csv('./counties_crime.csv');
         columns = response.columns.slice(2); // Assuming the first column is 'County' and second is 'Crimes'
@@ -36,6 +50,7 @@
         //console.log(specific_data);
     }
     onMount(loadTotalCrimeData);
+    onMount(loadCountyPopData);
     onMount(loadSpecificData);
 
     let projection = geoMercator()
@@ -46,7 +61,7 @@
     let path = geoPath()
         .projection(projection);
 
-    function updateScaleBar(svg, maxCrimeCount) {
+    function updateScaleBar(svg, maxCrimeRate) {
         const scaleBarWidth = 300;
         const minValue = 0;
 
@@ -54,7 +69,7 @@
             .text(minValue);
 
         svg.select(".scale-bar text:last-of-type")
-            .text(maxCrimeCount);
+            .text(maxCrimeRate + "%");
     }
 
     onMount(() => {
@@ -96,9 +111,8 @@
                 const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
                 const countyTotalData = data.filter(c => c.County === d.properties.name);
                 const totalCrimeCount = countyTotalData.filter(c => c.Year === parseInt(selectedYear, 10));
-                //console.log(totalCrimeCount);
-
-
+                const county = population_data.filter(c => c.County === d.properties.name);
+                const countyPopulation = county.filter(c => c.Year === parseInt(selectedYear, 10));
 
                 div.transition()
                     .duration(200)
@@ -107,7 +121,8 @@
                         Violent Crime: ${violent[0].Crime_Count}<br>
                         Property Crimes: ${property[0].Crime_Count}<br>
                         Arson: ${arson[0].Crime_Count}<br>
-                        Total: ${totalCrimeCount[0].Crime_Count}`)
+                        Total Crimes: ${totalCrimeCount[0].Crime_Count}<br>
+                        Population: ${countyPopulation[0].Population}`)
                     .style("left", (event.pageX) + 10 + "px")
                     .style("top", (event.pageY - 30) + "px");
             })
@@ -121,9 +136,7 @@
                 const countyData = specific_data.filter(c => c.County === d.properties.name);
                 const selectedYear = document.getElementById('selectedYear').textContent;
                 const crimeCount = countyData.filter(c => c.Year === parseInt(selectedYear, 10));
-                // const violent = crimeCount.filter(c => c.Crime_Category === "Violent Crimes");
-                // const property = crimeCount.filter(c => c.Crime_Category === "Property Crimes");
-                // const arson = crimeCount.filter(c => c.Crime_Category === "Arson");
+
                 console.log(crimeCount);
                 crime = crimeCount;
                 highlightCounty();
@@ -187,7 +200,7 @@
                 .attr("x", scaleBarWidth)
                 .attr("y", -5)
                 .attr("text-anchor", "middle")
-                .text(1000000); // Default max value, will be updated
+                .text('__%'); // Default max value, will be updated
         }
 
         addScaleBar();
@@ -198,33 +211,47 @@
             });
         }
 
+        
         function updateHeatMap(year) {
             const yearInt = parseInt(year, 10); // Ensure year is treated as an integer
-
             const yearData = data.filter(d => d.Year === yearInt);
+            const yearPopData = population_data.filter(d => d.Year === yearInt);
 
             // Check if data exists for the selected year
-            if (yearData.length === 0) {
-                //console.warn(`No data available for the year ${yearInt}`);
-                // Handle this case, e.g., set a default color or notify the user
-                svg.selectAll(".subunit").style("fill", "gray"); // Example: Set default color to gray
+            if (yearPopData.length === 0) {
+                console.warn(`No population data available for the year ${yearInt}`);
+                svg.selectAll(".subunit").style("fill", "gray"); // Set default color to gray
                 return;
             }
 
-            // Update the color scale domain based on the year data
-            const maxCrimeCount = d3.max(yearData, d => d.Crime_Count);
-            colorScale.domain([0, maxCrimeCount]);
+            // Calculate crime rates for each county
+            const crimeRates = yearData.map(d => {
+                const popData = yearPopData.find(c => c.County === d.County);
+                return popData ? ((d.Crime_Count / popData.Population) * 100).toFixed(2) : 0;
+            });
 
+            // Determine the maximum crime rate
+            const maxCrimeRate = d3.max(crimeRates);
+
+            // Update the color scale domain based on the maximum crime rate
+            colorScale.domain([0, maxCrimeRate]);
+
+            // Fill the counties based on their crime rate
             svg.selectAll(".subunit").style("fill", d => {
                 const countyData = yearData.find(c => c.County === d.properties.name);
-                const fillColor = countyData ? colorScale(countyData.Crime_Count) : "gray";
-                return fillColor;
+                const countyPopData = yearPopData.find(c => c.County === d.properties.name);
+
+                if (countyData && countyPopData) {
+                    const crimeRate = ((countyData.Crime_Count / countyPopData.Population) * 100).toFixed(2);
+                    return colorScale(crimeRate);
+                } else {
+                    return "gray"; // Default color for counties without data
+                }
             });
 
             // Update the scale bar for the current year
-            updateScaleBar(svg, maxCrimeCount);
+            updateScaleBar(svg, maxCrimeRate);
         }
-
         // Event listener for dropdown change
         document.getElementById("countyDropdown").addEventListener("change", function(event) {
             selectedCounty = event.target.value;

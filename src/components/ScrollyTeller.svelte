@@ -63,7 +63,7 @@
 
     <!-- 2nd page, cal map with county crime data -->
     {#if index == 0}
-      <h1 class="header">California Counties Crime Counts 2013-2022</h1>
+      <h1 class="header">California Counties Crime Rates and Counts 2013-2022</h1>
 
       <p class="writeup">
         Welcome to our comprehensive analytical project that investigates the
@@ -99,6 +99,7 @@
     {#if index == 2}
       <p class="writeup">California Police Population Trends (2013-2022)</p>
       <p class="writeup">
+        <br><br><br><br>
         This interactive visualization presents a decade-long trend (2013-2022)
         of police population across various counties in California. Each line
         represents a different county, showcasing how police population numbers

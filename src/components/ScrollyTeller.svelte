@@ -111,7 +111,13 @@
         <div class="right">
           <Police />
         </div>
+        
       </section>
+      <p class="writeup">Conclusion</p>
+      <p class="writeup">
+        We observed that as the police population increases, the crime rate decreases. For instance, in Stanislaus,
+        the heatmap progressively shifts towards green over the years as the number of police officers grows on line plot.
+      </p>
     {/if}
   {/each}
 </div>

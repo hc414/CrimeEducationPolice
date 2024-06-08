@@ -7,6 +7,7 @@
   let data = [];
   let columns = []; // Initialize columns as an empty array to avoid errors during component initialization
 
+  
   async function loadData() {
     const response = await d3.csv("/counties_crime.csv");
     if (response && response.columns) {

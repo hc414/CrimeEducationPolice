@@ -8,6 +8,7 @@
   let inputCounty = ""; //store the input county name for the user
   let selectedData = []; //extract the county value from the whole csv
   let countyData = new Map();
+  let currentCounty = "";
 
   //mouse event
   let tooltipContent = null;
@@ -28,7 +29,7 @@
     console.log("all data", data);
     console.log("load csv success");
 
-      // highlightChartData();  // Ensure initial data is loaded for default county
+    // highlightChartData();  // Ensure initial data is loaded for default county
     allChart();
   });
 
@@ -153,74 +154,20 @@
     const match = data.find(
       (d) => d.county_name.toLowerCase() === inputCounty.toLowerCase()
     );
+
     if (match) {
+      // console.log(match.county_name);
+      currentCounty = match.county_name;
       selectedData = Object.entries(match.data).map(([year, value]) => ({
         year,
         value,
       }));
+      // console.log(selectedData);
       drawChart(); // Draw chart whenever data is updated
       //   console.log('Data for', inputCounty, selectedData);
     }
   }
 
-  //draw the line chart for this county
-  // function drawChart() {
-  //   const svg = d3.select("#PoliceChart");
-  //   svg.selectAll("*").remove(); // Clear previous drawings
-
-  //   const margin = { top: 20, right: 100, bottom: 30, left: 50 },
-  //     width = 800 - margin.left - margin.right,
-  //     height = 500 - margin.top - margin.bottom;
-
-  //   const x = d3
-  //     .scaleBand()
-  //     .domain(selectedData.map((d) => d.year))
-  //     .range([0, width])
-  //     .padding(0.1);
-
-  //   const y = d3
-  //     .scaleLinear()
-  //     .domain([0, d3.max(selectedData, (d) => d.value)])
-  //     .range([height, 0]);
-
-  //   const g = svg
-  //     .append("g")
-  //     .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  //   g.append("g")
-  //     .attr("transform", `translate(0,${height})`)
-  //     .call(d3.axisBottom(x));
-
-  //   g.append("g").call(d3.axisLeft(y));
-
-  //   const line = d3
-  //     .line()
-  //     .x((d) => x(d.year) + x.bandwidth() / 2)
-  //     .y((d) => y(d.value));
-
-  //   g.append("path")
-  //     .datum(selectedData)
-  //     .attr("fill", "none")
-  //     .attr("stroke", "steelblue")
-  //     .attr("stroke-width", 2)
-  //     .attr("d", line);
-
-  //   g.append("text")
-  //     .attr("class", "x label")
-  //     .attr("text-anchor", "end")
-  //     .attr("x", width / 2 + margin.left - 10)
-  //     .attr("y", height + margin.bottom + 30)
-  //     .text("Year");
-
-  //   // Y-axis label
-  //   g.append("text")
-  //     .attr("class", "y label")
-  //     .attr("text-anchor", "end")
-  //     .attr("transform", "rotate(-90)")
-  //     .attr("y", -margin.left + 10)
-  //     .attr("x", -height / 2)
-  //     .text("Population");
-  // }
   function drawChart() {
     const svg = d3.select("#PoliceChart");
     svg.selectAll("*").remove(); // Clear previous drawings
@@ -229,7 +176,6 @@
     const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
     const width = 990 - margin.left - margin.right;
     const height = 551 - margin.top - margin.bottom;
-
 
     // Apply the increased top margin in the transform of the g element
     const g = svg
@@ -271,8 +217,8 @@
     // Add x-axis label
     g.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2 +52)
-      .attr("y", height + margin.bottom +60)
+      .attr("x", width / 2 + 52)
+      .attr("y", height + margin.bottom + 60)
       .text("Year");
 
     // Add y-axis label
@@ -281,15 +227,14 @@
       .attr("transform", "rotate(-90)")
       .attr("y", -margin.left + 20)
       .attr("x", -height / 2)
-      .text("Value");
+      .text("Police population");
 
     // Add chart title
-    g
-      .append("text")
+    g.append("text")
       .attr("text-anchor", "middle")
       .attr("x", width / 2 + margin.left)
       .attr("y", margin.top / 2 - 90)
-      .text("Police population in each county");
+      .text(`Police population in ${currentCounty} County`);
   }
 
   $: highlightChartData();

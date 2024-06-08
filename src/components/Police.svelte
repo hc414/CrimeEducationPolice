@@ -8,6 +8,7 @@
   let inputCounty = ""; //store the input county name for the user
   let selectedData = []; //extract the county value from the whole csv
   let countyData = new Map();
+  let countyDropdown = null;
   let currentCounty = "";
 
   //mouse event
@@ -29,8 +30,24 @@
     console.log("all data", data);
     console.log("load csv success");
 
-    // highlightChartData();  // Ensure initial data is loaded for default county
+    countyDropdown = document.getElementById("countyDropdown1");
+    data.forEach((d) => {
+      const option = document.createElement("option");
+      option.text = d.county_name;
+      // console.log(d.county_name);
+      countyDropdown.appendChild(option);
+    });
+      // highlightChartData();  // Ensure initial data is loaded for default county
     allChart();
+    // Add event listener to the dropdown
+    countyDropdown.addEventListener('change', () => {
+        inputCounty = countyDropdown.value;
+        if (inputCounty.length == 0) {
+            allChart();
+        } else {
+            highlightChartData();
+        }
+    });
   });
 
   function buttonDectect() {
@@ -137,8 +154,8 @@
       .append("text")
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
-      .attr("y", margin.left - 109)
-      .attr("x", -margin.top - height / 2 + 70)
+      .attr("y", margin.left - 105)
+      .attr("x", -margin.top - height / 2 + 120)
       .text("Population");
 
     svg
@@ -147,36 +164,39 @@
       .attr("text-anchor", "middle")
       .attr("x", width / 2 + margin.left)
       .attr("y", margin.top / 2 - 90)
-      .text("Annual Police population changes in California");
+      .text("California Counties Police Population Over the Years (2013-2022)");
   }
 
   function highlightChartData() {
     const match = data.find(
       (d) => d.county_name.toLowerCase() === inputCounty.toLowerCase()
     );
-
     if (match) {
-      // console.log(match.county_name);
       currentCounty = match.county_name;
       selectedData = Object.entries(match.data).map(([year, value]) => ({
         year,
         value,
       }));
-      // console.log(selectedData);
       drawChart(); // Draw chart whenever data is updated
       //   console.log('Data for', inputCounty, selectedData);
     }
   }
 
+  // }
   function drawChart() {
     const svg = d3.select("#PoliceChart");
     svg.selectAll("*").remove(); // Clear previous drawings
 
     // Adjust the top margin to a larger value
-    const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
-    const width = 990 - margin.left - margin.right;
-    const height = 551 - margin.top - margin.bottom;
+    const margin = { top: 100, right: 100, bottom: 50, left: 70 }, // Increased top margin
+      svgWidth = 800,
+      svgHeight = 500,
+      width = svgWidth - margin.left - margin.right,
+      height = svgHeight - margin.top - margin.bottom;
 
+    //   const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
+    // const width = 990 - margin.left - margin.right;
+    // const height = 551 - margin.top - margin.bottom;
     // Apply the increased top margin in the transform of the g element
     const g = svg
       .append("g")
@@ -217,8 +237,8 @@
     // Add x-axis label
     g.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2 + 52)
-      .attr("y", height + margin.bottom + 60)
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 10)
       .text("Year");
 
     // Add y-axis label
@@ -226,23 +246,27 @@
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
       .attr("y", -margin.left + 20)
-      .attr("x", -height / 2)
-      .text("Police population");
+      .attr("x", (-height / 2) + 80)
+      .text("Police Population");
 
     // Add chart title
-    g.append("text")
+    svg
+      .append("text")
       .attr("text-anchor", "middle")
-      .attr("x", width / 2 + margin.left)
-      .attr("y", margin.top / 2 - 90)
-      .text(`Police population in ${currentCounty} County`);
+      .attr("x", svgWidth / 2)
+      .attr("y", margin.top / 2)
+      .text(`Police populaiton in ${currentCounty} County`);
   }
 
   $: highlightChartData();
 </script>
 
 <div class="input-button">
-  <input type="text" bind:value={inputCounty} placeholder="Ex:San Diego" />
-  <button on:click={buttonDectect}>Show Data</button>
+  <!-- <input type="text" bind:value={inputCounty} placeholder="Ex:San Diego" />
+  <button on:click={buttonDectect}>Show Data</button> -->
+  <select id="countyDropdown1">
+    <option value="">Select a County</option>
+  </select>
 </div>
 
 <main>

@@ -97,9 +97,8 @@
 
     <!-- 3rd page, police page -->
     {#if index == 2}
-      <p class="writeup">California Police Population Trends (2013-2022)</p>
+      <p class="writeup"><br><br><br><br>California Police Population Trends (2013-2022)</p>
       <p class="writeup">
-        <br><br><br><br>
         This interactive visualization presents a decade-long trend (2013-2022)
         of police population across various counties in California. Each line
         represents a different county, showcasing how police population numbers

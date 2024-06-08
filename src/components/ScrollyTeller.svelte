@@ -97,9 +97,8 @@
 
     <!-- 3rd page, police page -->
     {#if index == 2}
-      <p class="writeup">California Police Population Trends (2013-2022)</p>
+      <p class="writeup"><br><br><br><br>California Police Population Trends (2013-2022)</p>
       <p class="writeup">
-        <br><br><br><br>
         This interactive visualization presents a decade-long trend (2013-2022)
         of police population across various counties in California. Each line
         represents a different county, showcasing how police population numbers
@@ -112,7 +111,13 @@
         <div class="right">
           <Police />
         </div>
+        
       </section>
+      <p class="writeup">Conclusion</p>
+      <p class="writeup">
+        We observed that as the police population increases, the crime rate decreases. For instance, in Stanislaus,
+        the heatmap progressively shifts towards green over the years as the number of police officers grows on line plot.
+      </p>
     {/if}
   {/each}
 </div>

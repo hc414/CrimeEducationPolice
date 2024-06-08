@@ -113,7 +113,7 @@
                 const totalCrimeCount = countyTotalData.filter(c => c.Year === parseInt(selectedYear, 10));
                 const county = population_data.filter(c => c.County === d.properties.name);
                 const countyPopulation = county.filter(c => c.Year === parseInt(selectedYear, 10));
-
+                const crimeRate = ((totalCrimeCount[0].Crime_Count / countyPopulation[0].Population)* 100).toFixed(4);
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
@@ -122,7 +122,8 @@
                         Property Crimes: ${property[0].Crime_Count}<br>
                         Arson: ${arson[0].Crime_Count}<br>
                         Total Crimes: ${totalCrimeCount[0].Crime_Count}<br>
-                        Population: ${countyPopulation[0].Population}`)
+                        Population: ${countyPopulation[0].Population}<br>
+                        Crime Rate: ${crimeRate}%`)
                     .style("left", (event.pageX) + 10 + "px")
                     .style("top", (event.pageY - 30) + "px");
             })

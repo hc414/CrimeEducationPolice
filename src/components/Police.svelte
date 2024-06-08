@@ -226,15 +226,11 @@
     svg.selectAll("*").remove(); // Clear previous drawings
 
     // Adjust the top margin to a larger value
-    const margin = { top: 100, right: 100, bottom: 50, left: 70 }, // Increased top margin
-      svgWidth = 800,
-      svgHeight = 500,
-      width = svgWidth - margin.left - margin.right,
-      height = svgHeight - margin.top - margin.bottom;
+    const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
+    const width = 990 - margin.left - margin.right;
+    const height = 551 - margin.top - margin.bottom;
 
-    //   const margin = { top: 90, right: 30, bottom: -20, left: 60 }; // Adjusted for label space
-    // const width = 990 - margin.left - margin.right;
-    // const height = 551 - margin.top - margin.bottom;
+
     // Apply the increased top margin in the transform of the g element
     const g = svg
       .append("g")
@@ -275,8 +271,8 @@
     // Add x-axis label
     g.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2)
-      .attr("y", height + margin.bottom - 10)
+      .attr("x", width / 2 +52)
+      .attr("y", height + margin.bottom +60)
       .text("Year");
 
     // Add y-axis label
@@ -288,12 +284,12 @@
       .text("Value");
 
     // Add chart title
-    svg
+    g
       .append("text")
       .attr("text-anchor", "middle")
-      .attr("x", svgWidth / 2)
-      .attr("y", margin.top / 2)
-      .text("Annual Crime Rates and Police Presence");
+      .attr("x", width / 2 + margin.left)
+      .attr("y", margin.top / 2 - 90)
+      .text("Police population in each county");
   }
 
   $: highlightChartData();

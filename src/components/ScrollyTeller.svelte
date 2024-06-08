@@ -68,25 +68,23 @@
       <p class="writeup">
         Welcome to our comprehensive analytical project that investigates the
         relationship between crime rates and police presence across different
-        counties in California. Utilizing advanced data analysis techniques, we
+        counties in California. Utilizing advanced data visualization tools, we
         meticulously examine how these variables interact within diverse
         communities. Our project leverages extensive, up-to-date datasets to
         ensure accuracy and relevance in our findings.
       </p>
       <p class="writeup">
-        We aim to identify potential correlations that may shed light on the
-        effectiveness of law enforcement strategies and their impact on crime
-        rates. Our interactive platform features a detailed heat map of each
-        county, inviting you to visually compare these metrics across the state.
-        By clicking on any county within the map, you can access a bar graph
-        that provides the counts of each crime categories, such as Violets
-        Crimes, Properties Crimes, and Arson.
+        Our objective is to identify possible correlations between the police presence
+        in a county and its crime rates. Our interactive platform includes a detailed
+        heat map of each county, enabling you to easily visualize and compare crime 
+        rate changes across California each year. By clicking on any county on the map,
+        you can view a corresponding bar graph showing the counts of various crime categories,
+        such as Violent Crimes, Property Crimes, and Arson.
       </p>
 
       <section class="section-map">
         <div class="right">
-          <p class="writeup">Counties Crime Rate Heat Map</p>
-
+          <p class="writeup" style="font-weight: bold;">Counties Crime Rate Heat Map</p>
           <CalMap />
         </div>
         <div class="left">
@@ -97,7 +95,7 @@
 
     <!-- 3rd page, police page -->
     {#if index == 2}
-      <p class="writeup"><br><br><br><br>California Police Population Trends (2013-2022)</p>
+      <p class="writeup" style="font-weight: bold;"><br><br><br><br>California Police Population Trends (2013-2022)</p>
       <p class="writeup">
         This interactive visualization presents a decade-long trend (2013-2022)
         of police population across various counties in California. Each line
@@ -113,10 +111,15 @@
         </div>
         
       </section>
-      <p class="writeup">Conclusion</p>
+      <p class="writeup" style="font-weight: bold;">Conclusion</p>
       <p class="writeup">
-        We observed that as the police population increases, the crime rate decreases. For instance, in Stanislaus,
-        the heatmap progressively shifts towards green over the years as the number of police officers grows on line plot.
+        From our visualizations, we observed that although counties such as Stanislaus and Calaveras are two examples of counties 
+        that has an increasing police population and a decreasing crime rate, this might not be the case for most California counties. 
+        We see counties such as Humboldt's police population remains relatively stagnant, its crime rate still tend to decrease 
+        over the years. From these observations, we can conclude that although the population of police officers might have an impact 
+        on a county's crime rate, there are likely more underlying factors that affect crime rates that is yet to be looked into, 
+        hence we shouldn't generalize our observations.
+        <br><br><br><br>
       </p>
     {/if}
   {/each}
@@ -139,7 +142,7 @@
     height: 100vh;
     width: 100%;
   }
-
+  
   .left,
   .right {
     display: grid;
@@ -151,6 +154,7 @@
   .left {
     justify-content: center;
     align-items: center;
+    
   }
 
   .right {
@@ -168,10 +172,11 @@
 
   .big-section {
     background-color: #ffffff; /* Light grey background */
-    padding: 20px; /* Some padding for spacing */
+    padding: 40px; /* Some padding for spacing */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin: 20px 0; /* Margin to separate from other sections */
+    margin: 30px 0; /* Margin to separate from other sections */
+    padding-bottom: 50px;
   }
 
   .header {
@@ -180,11 +185,22 @@
     color: #333; /* Dark grey text color */
     margin-bottom: 10px; /* Space below the header */
   }
+  .margin-sides {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 400px;
 
+  }
   .writeup {
-    font-size: 30px; /* Regular font size for paragraph */
+    font-size: 25px; /* Regular font size for paragraph */
     line-height: 1.6; /* Increased line height for readability */
     color: #555; /* Medium grey text color */
     margin-bottom: 20px; /* Space below the paragraph */
+    margin-left: 150px;
+    margin-right: 150px;
+    font-family: 'Times New Roman', serif;
+
   }
+
+
 </style>
